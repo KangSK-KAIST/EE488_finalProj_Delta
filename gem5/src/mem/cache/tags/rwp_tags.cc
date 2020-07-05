@@ -49,8 +49,8 @@ RWPTags::shiftQueue(int *aQueue, int *aCounter, bool toHead)
             aQueue[i] = aQueue[i+1];
             aCounter[i] = aCounter[i+1];
         }
-        aQueue[256] = 0;
-        aCounter[256] = 0;
+        aQueue[255] = 0;
+        aCounter[255] = 0;
     }
 }
 
@@ -78,8 +78,8 @@ RWPTags::updateQueue(int *aQueue, int *aCounter, int iIndex, bool toHead)
             aQueue[i] = aQueue[i+1];
             aCounter[i] = aCounter[i+1];
         }
-        aQueue[256] = iQueue;
-        aCounter[256] = iCounter;
+        aQueue[255] = iQueue;
+        aCounter[255] = iCounter;
     }
 }
 
@@ -106,14 +106,17 @@ RWPTags::accessBlock(Addr addr, bool is_secure, Cycles &lat)
     // Accesses are based on parent class, no need to do anything special
     CacheBlk *blk = BaseSetAssoc::accessBlock(addr, is_secure, lat);
     
+    if (blk == nullptr)
+        return blk;
+    
     // Update LastTouch of block
-    aLastTouch[blk->set] = curTick();
+    aLastTouch[(blk->set)%numBlocks] = curTick();
     
     // Find the blocks in the queue
     int iIndexWO = -1;
     int iIndexRP = -1;
     
-    for (int i=0; i<numBlocks; ++i)
+    for (int i=0; i<256; ++i)
     {
         if ((iIndexWO != -1) && (aSetQueueWriteOnly[i] == blk->set))
         { // Originally WO
@@ -177,7 +180,7 @@ RWPTags::insertBlock(PacketPtr pkt, CacheBlk *blk)
     
     blk->set = set;
     
-    aLastTouch[blk->set] = curTick();
+    aLastTouch[(blk->set)%numBlocks] = curTick();
     
     if (blk->isDirty())
     { // New block is a write block
@@ -282,7 +285,7 @@ RWPTags::findVictim(Addr addr) const
                 if (aLastTouch[pCandidate->set] > tCompare)
                 {
                     victim = candidates[i];
-                    tCompare = aLastTouch[pCandidate->set];
+                    tCompare = aLastTouch[(pCandidate->set)%numBlocks];
                 }
             }
         }
@@ -294,10 +297,10 @@ RWPTags::findVictim(Addr addr) const
             }
             else
             { // Else, choose LRU
-                if (aLastTouch[pCandidate->set] > tCompare)
+                if (aLastTouch[(pCandidate->set)%numBlocks] > tCompare)
                 {
                     victim = candidates[i];
-                    tCompare = aLastTouch[pCandidate->set];
+                    tCompare = aLastTouch[(pCandidate->set)%numBlocks];
                 }
             }
         }
@@ -309,10 +312,10 @@ RWPTags::findVictim(Addr addr) const
         for (int i=0; i<candidates.size(); ++i)
         {
             CacheBlk* pCandidate = static_cast<CacheBlk*>(candidates[i]);
-            if (aLastTouch[pCandidate->set] > tCompare)
+            if (aLastTouch[(pCandidate->set)%numBlocks] > tCompare)
             {
                 victim = candidates[i];
-                tCompare = aLastTouch[pCandidate->set];
+                tCompare = aLastTouch[(pCandidate->set)%numBlocks];
             }
         }
     }
@@ -328,7 +331,7 @@ RWPTags::invalidate(CacheBlk *blk)
 
     // should be evicted before valid blocks
     
-    aLastTouch[blk->set] = 0;
+    aLastTouch[(blk->set)%numBlocks] = 0;
     if (aWriteOnly[blk->set] == false)
     { // It was originally RP
         // Set to WO

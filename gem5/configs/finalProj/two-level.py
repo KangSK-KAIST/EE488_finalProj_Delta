@@ -110,9 +110,6 @@ root.system.l2cache.mem_side = root.system.membus.slave
 root.system.l1cache.replacement_policy = LRURP()
 
 
-root.system.l2cache.replacement_policy = LRURP()
-
-
 # Cache Options
 root.system.l1cache.size = options.l1_size
 root.system.l1cache.assoc = options.l1_assoc
@@ -125,13 +122,13 @@ root.system.l2cache.tag_latency = options.l2_latency
 # Process system
 process = Process()
 if options.bench_1:
-	process.cmd = ['tests/2MM/2mm_base']
+	process.cmd = ['test_bench/2MM/2mm_base']
 elif options.bench_2:
-	process.cmd = ['tests/BFS/bfs','-f','test_bench/BFS/USA-road-d.NY.gr']
+	process.cmd = ['test_bench/BFS/bfs','-f','test_bench/BFS/USA-road-d.NY.gr']
 elif options.bench_3:
-	process.cmd = ['tests/bzip2/bzip2_base.amd64-m64-gcc42-nn','test_bench/bzip2/input.source','280']
+	process.cmd = ['test_bench/bzip2/bzip2_base.amd64-m64-gcc42-nn','test_bench/bzip2/input.source','280']
 elif options.bench_4:
-	process.cmd = ['tests/mcf/mcf_base.amd64-m64-gcc42-nn','test_bench/mcf/inp.in']
+	process.cmd = ['test_bench/mcf/mcf_base.amd64-m64-gcc42-nn','test_bench/mcf/inp.in']
 else:
 	process.cmd = ['tests/test-progs/hello/bin/arm/linux/hello']
 

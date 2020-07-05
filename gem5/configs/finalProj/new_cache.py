@@ -19,9 +19,9 @@ class L2Cache(Cache):
     tgts_per_mshr = 12
 
 class L2CacheRWP(Cache):
+    tags = RWPTags()
     size = '2MB'
     assoc = 1
-    tags = RWPTags
     tag_latency = 20
     data_latency = 20
     response_latency = 20

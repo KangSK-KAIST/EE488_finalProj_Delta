@@ -11,18 +11,20 @@ class L1Cache(Cache):
 
 class L2Cache(Cache):
     size = '2MB'
-    assoc = 8
+    assoc = 1
     tag_latency = 20
     data_latency = 20
     response_latency = 20
     mshrs = 20
     tgts_per_mshr = 12
 
-class L3Cache(Cache):
-	size = '8MB'
-	assoc = 32
-	tag_latency = 80
-	data_latency = 80
-	response_latency = 80
-	mshrs = 80
-	tgts_per_mshr = 12
+class L2CacheRWP(Cache):
+    size = '2MB'
+    assoc = 1
+    tags = RWPTags
+    tag_latency = 20
+    data_latency = 20
+    response_latency = 20
+    mshrs = 20
+    tgts_per_mshr = 12
+

@@ -92,7 +92,12 @@ root.system.system_port = root.system.membus.slave
 
 # Default cache system
 root.system.l1cache = L1Cache()
-root.system.l2cache = L2Cache()
+if options.cache_LRU:
+    root.system.l2cache = L2Cache()
+elif options.cache_RWP:
+    root.system.l2cache = L2CacheRWP()
+else:
+    root.system.l2cache = L2Cache()
 
 root.system.l1bus = L2XBar()
 
@@ -103,12 +108,10 @@ root.system.l1cache.mem_side = root.system.l2cache.cpu_side
 root.system.l2cache.mem_side = root.system.membus.slave
 
 root.system.l1cache.replacement_policy = LRURP()
-if options.cache_LRU:
-    root.system.l2cache.replacement_policy = LRURP()
-elif options.cache_RWP:
-    root.system.l2cache.replacement_policy = RWPRP()
-else:
-    root.system.l2cache.replacement_policy = LRURP()
+
+
+root.system.l2cache.replacement_policy = LRURP()
+
 
 # Cache Options
 root.system.l1cache.size = options.l1_size

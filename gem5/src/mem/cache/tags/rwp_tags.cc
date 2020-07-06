@@ -184,7 +184,7 @@ RWPTags::insertBlock(PacketPtr pkt, CacheBlk *blk)
     
     if (blk->isDirty())
     { // New block is a write block
-        if (aWriteOnly[blk->set] == true)
+        if (aWriteOnly[(blk->set)%numBlocks] == true)
         { // It was a write block
             // Find the blocks in the queue
             int iIndexWO = -1;
@@ -247,6 +247,13 @@ RWPTags::insertBlock(PacketPtr pkt, CacheBlk *blk)
                 aCounterWriteOnly[iIndexWO] = 0;
                 // Move to WO LRU
                 updateQueue(aSetQueueWriteOnly, aCounterWriteOnly, iIndexWO, false);
+            }
+            
+            if (aWriteOnly[(blk->set)%numBlocks] == true)
+            { // It was WO block, so change it to RP
+                aWriteOnly[(blk->set)%numBlocks] = false;
+                --iTotalWriteOnly;
+                ++iTotalReadPoss;
             }
         }
     }

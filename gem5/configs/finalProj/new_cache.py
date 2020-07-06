@@ -11,7 +11,7 @@ class L1Cache(Cache):
 
 class L2Cache(Cache):
     size = '2MB'
-    assoc = 1
+    assoc = 4
     tag_latency = 20
     data_latency = 20
     response_latency = 20
@@ -21,7 +21,7 @@ class L2Cache(Cache):
 class L2CacheRWP(Cache):
     tags = RWPTags()
     size = '2MB'
-    assoc = 1
+    assoc = 4
     tag_latency = 20
     data_latency = 20
     response_latency = 20

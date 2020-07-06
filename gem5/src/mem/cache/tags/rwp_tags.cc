@@ -112,6 +112,14 @@ RWPTags::accessBlock(Addr addr, bool is_secure, Cycles &lat)
     // Update LastTouch of block
     aLastTouch[(blk->set)%numBlocks] = curTick();
     
+    if (aWriteOnly[(blk->set)%numBlocks] == true)
+    {
+        --iTotalWriteOnly;
+        ++iTotalReadPoss;
+    }
+    aWriteOnly[(blk->set)%numBlocks] = false;
+
+    
     // Find the blocks in the queue
     int iIndexWO = -1;
     int iIndexRP = -1;
@@ -166,7 +174,6 @@ RWPTags::accessBlock(Addr addr, bool is_secure, Cycles &lat)
             updateQueue(aSetQueueReadPoss, aCounterReadPoss, iIndexRP, true);
         }
     }
-    
     
     return blk;
 }
@@ -339,10 +346,10 @@ RWPTags::invalidate(CacheBlk *blk)
     // should be evicted before valid blocks
     
     aLastTouch[(blk->set)%numBlocks] = 0;
-    if (aWriteOnly[blk->set] == false)
+    if (aWriteOnly[(blk->set)%numBlocks] == false)
     { // It was originally RP
         // Set to WO
-        aWriteOnly[blk->set] = true;
+        aWriteOnly[(blk->set)%numBlocks] = true;
         ++iTotalWriteOnly;
         --iTotalReadPoss;
     }

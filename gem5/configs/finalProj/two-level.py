@@ -27,7 +27,7 @@ parser.add_option('--thread_max', type="int", default=1000000000)
 parser.add_option('--cache_LRU', action="store_true")
 parser.add_option('--cache_RWP', action="store_true")
 
-parser.add_option('--l1_size', type="string", default="32kB")
+parser.add_option('--l1_size', type="string", default="2kB")
 parser.add_option('--l1_assoc', type="int", default=4)
 parser.add_option('--l1_latency', type="int", default=2)
 parser.add_option('--l2_size', type="string", default="2MB")
